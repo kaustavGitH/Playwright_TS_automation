@@ -87,7 +87,7 @@ test('Details page shows an item details', async ({ page }) => {
     await inventoryPage.openAndVerifyProductDetails(selectItem);
 });
 
-test.only('User is able to add an item and remove it', async({page})=>{
+test('User is able to add an item and remove it', async({page})=>{
 
     const selectItem = "Sauce Labs Fleece Jacket";
     const validUsername: string = "standard_user";
