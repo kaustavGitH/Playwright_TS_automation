@@ -1,85 +1,97 @@
-pipeline{
-    agent any
+// pipeline{
+//     agent any
 
-    environment{
-        URL = "https://github.com/kaustavGitH/Playwright_TS_automation.git"
-        BRANCH = "main"
-    }
+//     environment{
+//         URL = "https://github.com/kaustavGitH/Playwright_TS_automation.git"
+//         BRANCH = "main"
+//     }
 
-    stages{
-        stage('Cleanup workspace'){
-            steps{
-                echo "Cleaning up workspace......"
-                cleanWs()
-            }
-        }
+//     stages{
+//         stage('Cleanup workspace'){
+//             steps{
+//                 echo "Cleaning up workspace......"
+//                 cleanWs()
+//             }
+//         }
 
-        stage('Checkout code'){
-            steps{
-                echo "Cloning this repository"
-                git url: "${URL}", branch: "${BRANCH}"
-                echo" Code is successfully cloned"
-            }
-        }
+//         stage('Checkout code'){
+//             steps{
+//                 echo "Cloning this repository"
+//                 git url: "${URL}", branch: "${BRANCH}"
+//                 echo" Code is successfully cloned"
+//             }
+//         }
 
-        stage('Terraform init'){
-            steps{
-                dir('terraform'){
-                    echo "Initializing terraform"
-                    sh 'terraform-init'
-                }
-            }
-        }
+//         stage('Terraform init'){
+//             steps{
+//                 dir('terraform'){
+//                     echo "Initializing terraform"
+//                     sh 'terraform-init'
+//                 }
+//             }
+//         }
 
-        stage('Terraform validate'){
-            steps{
-                dir('terraform'){
-                    echo "Validate terraform configuration"
-                    sh 'terraform validate'
-                }
-            }
-        }
+//         stage('Terraform validate'){
+//             steps{
+//                 dir('terraform'){
+//                     echo "Validate terraform configuration"
+//                     sh 'terraform validate'
+//                 }
+//             }
+//         }
 
-        stage('Terraform plan'){
-            steps{
-                dir('terraform'){
-                    echo "Planning terraform"
-                    sh 'terraform plan'
-                }
-            }
-        }
+//         stage('Terraform plan'){
+//             steps{
+//                 dir('terraform'){
+//                     echo "Planning terraform"
+//                     sh 'terraform plan'
+//                 }
+//             }
+//         }
 
-        stage('Terraform apply'){
-            steps{
-                dir('terraform'){
-                    echo "Terraform create resources"
-                    sh 'terraform apply --auto-approve'
-                }
-            }
-        }
+//         stage('Terraform apply'){
+//             steps{
+//                 dir('terraform'){
+//                     echo "Terraform create resources"
+//                     sh 'terraform apply --auto-approve'
+//                 }
+//             }
+//         }
 
-        stage('Setup docker and playwright'){
-            steps{
-                dir('ansible'){
-                    sh 'ansible-playbook -i inventory.ini env-setup.yml'
-                }
-            }
-        }
+//         stage('Setup docker and playwright'){
+//             steps{
+//                 dir('ansible'){
+//                     sh 'ansible-playbook -i inventory.ini env-setup.yml'
+//                 }
+//             }
+//         }
 
-        stage('Run playwright test'){
-            steps{
-                echo "Running playwright tests in headed mode"
-                sh 'npx playwright test'
-            }
-        }
+//         stage('Run playwright test'){
+//             steps{
+//                 echo "Running playwright tests in headed mode"
+//                 sh 'npx playwright test'
+//             }
+//         }
 
-        stage('Terraform destroy'){
-            steps{
-                dir('terraform'){
-                    echo "Terraform destroy resources"
-                    sh 'terraform destroy --auto-approve'
-                }
-            }
-        }
-    }
+//         stage('Terraform destroy'){
+//             steps{
+//                 dir('terraform'){
+//                     echo "Terraform destroy resources"
+//                     sh 'terraform destroy --auto-approve'
+//                 }
+//             }
+//         }
+//     }
+// }
+
+pipeline {
+   agent { docker { image 'mcr.microsoft.com/playwright:v1.64.1-noble' } }
+   stages {
+      stage('e2e-tests') {
+         steps {
+            sh 'npm ci'
+            sh 'npx playwright test'
+         }
+      }
+   }
 }
