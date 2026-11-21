@@ -65,6 +65,8 @@ test('Cart reflects multiple selected products and supports removal and continue
 
     await cartPage.clickContinueShoppingBtn();
 
+    await page.waitForLoadState();
+
     // Verifies user is navigated back to inventory page
     await cartPage.verifyInventoryUrl("https://www.saucedemo.com/inventory.html");
 });
